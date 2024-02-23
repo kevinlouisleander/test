@@ -7,15 +7,6 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'northamerica-northeast2-docker.pkg.dev/analog-context-413503/kevinleandertest/python-app:${COMMIT_SHA}']
 
-steps:
-  # Build the Docker image
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'northamerica-northeast2-docker.pkg.dev/analog-context-413503/kevinleandertest/python-app:${COMMIT_SHA}', '.']
-
-  # Push the Docker image to the artifact registry
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'northamerica-northeast2-docker.pkg.dev/analog-context-413503/kevinleandertest/python-app:${COMMIT_SHA}']
-
   # Deploy the Docker container to Google Cloud Run
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
@@ -31,16 +22,11 @@ steps:
       - '--concurrency=80'
       - '--timeout=5s'
       - '--allow-unauthenticated'
+      - '--ingress=internal-and-cloud-load-balancing'
 
-options:
-  # Set defaultLogsBucketBehavior to REGIONAL_USER_OWNED_BUCKET
-  # defaultLogsBucket: 'gs://your-build-logs-bucket' # Replace with your build logs bucket
-  defaultLogsBucketBehavior: 'REGIONAL_USER_OWNED_BUCKET'
- 
-images:
-  # Store images in Google Artifact Registry
-  - northamerica-northeast2-docker.pkg.dev/analog-context-413503/kevinleandertest/python-app:${COMMIT_SHA}
-
+  # Publish a message to Pub/Sub when the deployment is finished
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ['pubsub', 'topics', 'publish', 'midterm', '--message', 'Deployment finished successfully.']
 
 options:
   # Set defaultLogsBucketBehavior to REGIONAL_USER_OWNED_BUCKET
