@@ -15,14 +15,12 @@ steps:
       - 'python-app'
       - '--image=northamerica-northeast2-docker.pkg.dev/analog-context-413503/kevinleandertest/python-app:${COMMIT_SHA}'
       - '--platform=managed'
-      - '--region=us-central1'
+      - '--region=us-central1,us-east1'  # Adjust based on your requirements
       - '--port=3000'
       - '--min-instances=1'
       - '--max-instances=10'
       - '--concurrency=80'
-      - '--timeout=5s'
       - '--allow-unauthenticated'
-      - '--ingress=internal-and-cloud-load-balancing'
 
 options:
   # Set defaultLogsBucketBehavior to REGIONAL_USER_OWNED_BUCKET
