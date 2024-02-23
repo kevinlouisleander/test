@@ -10,3 +10,6 @@ RUN pip install -r requirements.txt
 COPY . .
 
 CMD ["python", "app.py"]
+
+# Expose port 3000
+EXPOSE 3000
