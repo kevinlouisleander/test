@@ -17,6 +17,13 @@ steps:
       - '--platform=managed'
       - '--region=us-central1'
       - '--port=3000'
+      - '--min-instances=1'
+      - '--max-instances=10'
+      - '--concurrency=80'
+      - '--timeout=5s'
+      - '--check-interval=5s'
+      - '--failure-threshold=3'
+      - '--success-threshold=1'
       - '--allow-unauthenticated'
 
 options:
