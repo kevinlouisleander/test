@@ -7,6 +7,15 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'northamerica-northeast2-docker.pkg.dev/analog-context-413503/kevinleandertest/python-app:${COMMIT_SHA}']
 
+steps:
+  # Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'northamerica-northeast2-docker.pkg.dev/analog-context-413503/kevinleandertest/python-app:${COMMIT_SHA}', '.']
+
+  # Push the Docker image to the artifact registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'northamerica-northeast2-docker.pkg.dev/analog-context-413503/kevinleandertest/python-app:${COMMIT_SHA}']
+
   # Deploy the Docker container to Google Cloud Run
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
@@ -15,12 +24,23 @@ steps:
       - 'python-app'
       - '--image=northamerica-northeast2-docker.pkg.dev/analog-context-413503/kevinleandertest/python-app:${COMMIT_SHA}'
       - '--platform=managed'
-      - '--region=us-central1,us-east1'  # Adjust based on your requirements
+      - '--region=us-central1'  # Use a single region
       - '--port=3000'
       - '--min-instances=1'
       - '--max-instances=10'
       - '--concurrency=80'
+      - '--timeout=5s'
       - '--allow-unauthenticated'
+
+options:
+  # Set defaultLogsBucketBehavior to REGIONAL_USER_OWNED_BUCKET
+  # defaultLogsBucket: 'gs://your-build-logs-bucket' # Replace with your build logs bucket
+  defaultLogsBucketBehavior: 'REGIONAL_USER_OWNED_BUCKET'
+ 
+images:
+  # Store images in Google Artifact Registry
+  - northamerica-northeast2-docker.pkg.dev/analog-context-413503/kevinleandertest/python-app:${COMMIT_SHA}
+
 
 options:
   # Set defaultLogsBucketBehavior to REGIONAL_USER_OWNED_BUCKET
